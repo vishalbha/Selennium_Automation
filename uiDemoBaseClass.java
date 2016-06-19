@@ -3,15 +3,10 @@ package com.automation.base;
 
 import java.util.concurrent.TimeUnit;
 
-import org.bouncycastle.crypto.modes.PGPCFBBlockCipher;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
-
-
-
-
 
 import com.automation.pageobject.uiDemoPOClass;
 
@@ -27,6 +22,7 @@ public class uiDemoBaseClass {
 	//Check invalid Username Password test-case (Negative Test-Case)
 
 	public void loginPage(WebDriver driver){
+		driver.navigate().refresh();
 		pageobject.clickLoginLink();
 		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
 		pageobject.enterUsername();
@@ -36,6 +32,15 @@ public class uiDemoBaseClass {
 		Assert.assertEquals(pageobject.readErrorMessage(), "Invalid details. Please try again.");
 	}
 	
+	public void loginPageUsingDataProvider(WebDriver driver,String sUsername , String sPassword){
+		pageobject.clickLoginLink();
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+		pageobject.enterUsernameDP(sUsername);
+		pageobject.enterPasswordDP(sPassword);
+		pageobject.clickLoginButton();
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+		Assert.assertEquals(pageobject.readErrorMessage(), "Invalid details. Please try again.");
+	}
 	//Go for registration but enter invalid length of number (Negative Test-Case)
 	public void registerPage(WebDriver driver){
 		pageobject.clickSignUpLink();
@@ -52,6 +57,8 @@ public class uiDemoBaseClass {
 		
 	}
 	
+	
+	
 	//(Positive Test-Case)
 	public void loginform(WebDriver driver){
 		pageobject.validEnterUsername();
@@ -65,10 +72,27 @@ public class uiDemoBaseClass {
 		pageobject.enterSearchItem();
 		pageobject.clickSearchButton();
 		//...Shortlist lowest price
-		driver.findElement(By.cssSelector(".pointer.fk-inline-block[value='sort=price_asc']")).click();
+		pageobject.clickLowerPrice();
 		driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS);
-		driver.findElement(By.xpath("//div[@id='products']/div/div[7]/div[1]/div/div[1]/a[1]")).click();
-		
-		
+		pageobject.selectItem();
+		pageobject.clickOnAddToCart(); 
+		driver.navigate().refresh();
+		pageobject.clickOnCartButton();
+		pageobject.clickonWishlistlink();
+		driver.navigate().back();
+		pageobject.clickBuyNowBtn();
+		pageobject.clickDeleteOption();	
+		//.. Handle Alert.
+		Alert alert = driver.switchTo().alert();
+		System.out.println(alert.getText());
+		alert.dismiss();
+		pageobject.clickEditOption();
+		String window1= driver.getWindowHandle();
+		driver.switchTo().window(window1);
+		pageobject.clearNameValue();
+		pageobject.enterNameValue();
+		pageobject.clickSaveandContinue();
+		driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS);
+		pageobject.clickclickContinue();
 	}
 }
